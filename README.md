@@ -1,4 +1,4 @@
-# Despliegue del servidor para un usar n8n
+# Despliegue del servidor para usar n8n
 Este repositorio contiene dos formas de despliegue del servidor N8N:
 
 - **Modo local**: para pruebas y desarrollo, más sencillo de configurar. Con n8n y Postgres
@@ -205,18 +205,11 @@ Si deseas cambiar la contraseña de Redis, modifícala en este campo.
 ✅ pgAdmin (opcional: para administración de la base de datos)  
 ✅ Tailscale
 
----
-
-5. Lanzar todo el stack:
-
-```bash
-docker-compose up -d
-```
 
 ---
 ## 2.5 Lanzar los contenedores 
 
-Desde la carpeta `n8n/`:
+Desde la carpeta `servidor/n8n/`:
 
 ```bash
 docker-compose up -d
