@@ -1,0 +1,30 @@
+services:
+  db:
+    image: ankane/pgvector
+    container_name: pgvector-db
+    environment:
+      POSTGRES_USER: example_user
+      POSTGRES_PASSWORD: example_password
+      POSTGRES_DB: example_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+
+  n8n:
+    image: n8nio/n8n
+    container_name: n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_USER=example_admin
+      - N8N_BASIC_AUTH_PASSWORD=example_password
+      - N8N_PORT=5678
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      - db
+
+volumes:
+  pgvector_data:
+  n8n_data:
