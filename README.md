@@ -5,7 +5,7 @@ Este repositorio contiene dos formas de despliegue del servidor N8N:
 - **Modo servidor (producción)**: para despliegue en un servidor con Nginx como reverse proxy, HTTPS automatizado (Let's Encrypt) y VPN (Tailscale).
 
 ---
-# 1️⃣ Despliegue en local (para pruebas)
+# 1. Despliegue en local (para pruebas)
 
 ### Pasos:
 
@@ -32,7 +32,7 @@ http://localhost:5678
 - Este modo es ideal para pruebas rápidas y desarrollo local.
 
 ---
-# 2️⃣ Despliegue en servidor (producción)
+# 2. Despliegue en servidor (producción)
 
 ## 2.1 Configuración de Nginx
 ### Instalar Nginx en el servidor
@@ -144,12 +144,12 @@ chmod 600 ~/.config/tsauthkey
 
 ---
 
-## 2.4 Configuración de N8N (modo servidor)
+## 2.4 Configuración de N8N y servicios
 
-1. Navegar a la carpeta `n8n/`:
+1. Navegar a la carpeta `servidor/`:
 
 ```bash
-cd n8n/
+cd servidor/
 ```
 
 2. Copiar el archivo de variables:
@@ -160,16 +160,57 @@ cp example.env .env
 
 3. Editar el archivo `.env`:
 
-- `N8N_HOST` debe ser el hostname de tu servidor.
-- `WEBHOOK_URL` debe ser la URL de tu servidor.
-- `GENERIC_TIMEZONE` debe ser tu zona horaria.
-
-Ejemplo:
+- Variables de N8N:
 
 ```env
 N8N_HOST=yourdomain.com
 WEBHOOK_URL=https://yourdomain.com/
 GENERIC_TIMEZONE=Europe/Madrid
+N8N_BASIC_AUTH_USER=admin
+N8N_BASIC_AUTH_PASSWORD=yourpassword
+```
+
+- Variables de PostgreSQL:
+
+```env
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=yourpassword
+POSTGRES_DB=n8n
+```
+
+- Variables de pgAdmin:
+
+```env
+PGADMIN_DEFAULT_EMAIL=your-email@example.com
+PGADMIN_DEFAULT_PASSWORD=yourpassword
+```
+
+4. Editar el archivo `docker-compose.yml`:
+
+- La contraseña de Redis se encuentra definida directamente en el `docker-compose.yml`:
+
+```yaml
+command: ["redis-server", "--requirepass", "your_redis_password"]
+```
+
+Si deseas cambiar la contraseña de Redis, modifícala en este campo.
+
+---
+
+**Servicios que se lanzan en modo servidor**:
+
+✅ N8N  
+✅ PostgreSQL + pgvector  
+✅ Redis  
+✅ pgAdmin (opcional: para administración de la base de datos)  
+✅ Tailscale
+
+---
+
+5. Lanzar todo el stack:
+
+```bash
+docker-compose up -d
 ```
 
 ---
