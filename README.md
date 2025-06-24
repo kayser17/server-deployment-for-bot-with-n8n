@@ -1,8 +1,8 @@
 # Despliegue del servidor para usar n8n
 Este repositorio contiene dos formas de despliegue del servidor N8N:
 
-- **Modo local**: para pruebas y desarrollo, más sencillo de configurar. Con n8n y Postgres
-- **Modo servidor (producción)**: para despliegue en un servidor con Nginx como reverse proxy, HTTPS automatizado (Let's Encrypt) y VPN (Tailscale).
+- **Modo local**: para pruebas y desarrollo, más sencillo de configurar. Con n8n y Postgre
+- **Modo servidor (producción)**: para despliegue en un servidor con Nginx como reverse proxy, HTTPS automatizado (Let's Encrypt) y VPN (Tailscale). Además de Postgre, redis y pgAdmin
 
 ---
 # 1. Despliegue en local (para pruebas)
