@@ -7,7 +7,6 @@ Este repositorio contiene dos formas de despliegue del servidor N8N:
 ---
 # 1️⃣ Despliegue en local (para pruebas)
 
-## 1️⃣ Configuración de Nginx
 ### Pasos:
 
 1. Navegar a la carpeta `local/`:
