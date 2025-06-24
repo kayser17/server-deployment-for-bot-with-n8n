@@ -1,0 +1,67 @@
+volumes:
+  n8n_storage:
+  pgvector_data:
+  redis_data:
+services:
+  db:
+    image: ankane/pgvector
+    container_name: pgvector-db
+    env_file:
+      - ".env"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7
+    container_name: redis
+    command: ["redis-server", "--requirepass", "password"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "5050:80"
+    env_file:
+      - ".env"
+    volumes:
+    - ./pgadmin:/var/lib/pgadmin
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    env_file:
+      - ".env"
+    volumes:
+      - n8n_storage:/home/node/.n8n
+      - ./local_files:/files
+    network_mode: service:n8n-on-hstgr
+    depends_on:
+      - db
+  n8n-on-hstgr:
+    image: tailscale/tailscale:latest
+    hostname: n8n-on-hstgr
+    ports:
+      - 5678:5678
+    environment:
+      - TS_EXTRA_ARGS=--auth-key file:/run/secrets/tsauthkey
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    volumes:
+      - ${PWD}/tailscale-n8n/state:/var/lib/tailscale
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    restart: unless-stopped
+    secrets:
+      - tsauthkey
+secrets:
+  tsauthkey:
+    file: ~/.config/tsauthkey
