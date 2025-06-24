@@ -1,4 +1,4 @@
-# Despliegue del servidor N8N con Nginx + Let's Encrypt
+# Despliegue del servidor N8N con Nginx + Let's Encrypt + Tailscale
 
 Este repositorio contiene los archivos necesarios para desplegar el servicio N8N con soporte de base de datos PostgreSQL (pgvector), Redis y túnel Tailscale, utilizando **Nginx como reverse proxy** con HTTPS automatizado mediante Let's Encrypt (Certbot).
 
@@ -79,45 +79,78 @@ Certbot configurará automáticamente HTTPS y programará la renovación automá
 
 ---
 
-## 3️⃣ Lanzar el stack (N8N + BBDD + Redis + Tailscale)
+## 3️⃣ Configuración de Tailscale
+
+El primer paso es crear una cuenta en Tailscale y añadir la máquina del servidor a tu **Tailnet**. Puedes hacerlo descargando la aplicación Tailscale desde su página web: https://tailscale.com/download
+
+Una vez instalada, necesitas una clave para añadir los contenedores de Docker a tu Tailnet.
+
+Pasos:
+
+1. Crea la carpeta `~/.config` si no existe:
+
+```bash
+mkdir -p ~/.config
+```
+
+2. Crea un archivo llamado `tsauthkey` en `~/.config`:
+
+```bash
+nano ~/.config/tsauthkey
+```
+
+3. Ve al panel de administración de Tailscale: https://login.tailscale.com/admin/settings/keys
+
+4. Haz clic en **Generate auth key...**
+
+- Activa la opción **Reusable**.
+- Genera la clave.
+- Copia la clave en el archivo `~/.config/tsauthkey`.
+
+5. Asegura los permisos del archivo:
+
+```bash
+chmod 600 ~/.config/tsauthkey
+```
+
+---
+
+## 4️⃣ Configuración de N8N
+
+1. Navegar a la carpeta `n8n/`:
+
+```bash
+cd n8n/
+```
+
+2. Copiar el archivo de variables:
+
+```bash
+cp example.env .env
+```
+
+3. Editar el archivo `.env`:
+
+- `N8N_HOST` debe ser el hostname de tu servidor.
+- `WEBHOOK_URL` debe ser la URL de tu servidor.
+- `GENERIC_TIMEZONE` debe ser tu zona horaria.
+
+Ejemplo:
+
+```env
+N8N_HOST=yourdomain.com
+WEBHOOK_URL=https://yourdomain.com/
+GENERIC_TIMEZONE=Europe/Madrid
+```
+
+---
+
+## 5️⃣ Lanzar el stack (N8N + BBDD + Redis + Tailscale)
 
 Desde la carpeta `n8n/`:
 
 ```bash
-cd n8n/
 docker-compose up -d
 ```
 
 ---
-
-## Estructura del stack
-
-- **Nginx** (reverse proxy, instalado en el sistema)
-- **Let's Encrypt** (certbot)
-- **N8N** (contenedor)
-- **PostgreSQL + pgvector** (contenedor)
-- **Redis** (contenedor)
-- **Tailscale** (contenedor VPN)
-
----
-
-## Variables de entorno
-
-El archivo de variables se encuentra en:
-
-```
-n8n/example.env
-```
-
-Copiarlo como `.env` y configurar los valores necesarios.
-
----
-
-## Notas finales
-
-- Este repositorio permite a cualquier usuario desplegar su propio servidor N8N personalizado.
-- Solo es necesario sustituir `YOUR_DOMAIN_HERE` en la configuración de Nginx por el dominio que se vaya a utilizar.
-- Los certificados SSL se gestionan de forma automática gracias a Let's Encrypt.
-
----
-
